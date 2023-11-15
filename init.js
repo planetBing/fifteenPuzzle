@@ -1,34 +1,23 @@
-/**
- * 1. 출력
- *  -게임타이틀, 현재 턴(1부터 시작), 1-8까지 숫자 무작위로 한 줄 출력
- *  -마지막 줄에 '교환할 두 숫자를 입력'이라는 프롬프트 출력
- * 2. 입력
- *  -정상적인 입력인지 확인 -> 정상이 아니면 다시 입력 받기
- * 3. 동작
- *  -정상입력이면 턴 증가시켜 출력
- *  -주어진 숫자열에서 입력받은 두 수 교환해서 출력
- *  -모든 수가 오름차순 정렬되면 축하메시지와 함께 프로그램 종료.
- */
-
 const readlineSync = require('readline-sync');
-// const readline = require("readline");
-// const rl = readline.createInterface({
-// 	input: process.stdin,
-// 	output: process.stdout,
-// });
 
 
 function init() {
     greetforStartingGame();
-    console.log("Turn 1");
+    console.log(`Turn ${turn}`);
     const randomArray = makeRandomNumArray();
     console.log(randomArray);
     const answerArray = makeAnswerArray(randomArray);
-    progressGame(randomArray);
+    receiveInput(randomArray, answerArray);
 }
 
 function greetforStartingGame() {
     console.log("간단 숫자 퍼즐");
+}
+
+let turn = 1;
+function increaseTurn() {
+    turn++
+    console.log(`Turn ${turn}`)
 }
 
 function makeRandomNumArray() {
@@ -49,25 +38,35 @@ function makeAnswerArray(randomArray) {
 }
 
 
-function progressGame(randomArray) {
+function receiveInput(randomArray, answerArray) {
+    while(!verifyArraysAreSame(randomArray, answerArray)) {
         const currentInput = readlineSync.question("교환할 두 숫자를 입력 (예: 1,2)");
-        if (checkInputMatchesRegularExpression(currentInput)) {
-            const [firstValue, secondValue] = currentInput.split(',').map(e => Number(e));
-            if (!(randomArray.includes(firstValue) && randomArray.includes(secondValue))) {
-                console.log("잘못 입력하셨습니다. 다시 입력해주세요.");
-            } else {
-                switchValues(randomArray, firstValue, secondValue);
-                console.log(randomArray);
-            }
-        } else {
-            console.log("잘못 입력하셨습니다. 다시 입력해 주세요");
-        }
+        verifyInputAndSwitchArray(randomArray, currentInput);
+    }
+    console.log(`축하합니다. ${turn}턴만에 퍼즐을 완성하셨습니다!`)
 }
+
+function verifyInputAndSwitchArray(randomArray, currentInput) {
+    if (checkInputMatchesRegularExpression(currentInput)) {
+        const [firstValue, secondValue] = currentInput.split(',').map(e => Number(e));
+        if (!(randomArray.includes(firstValue) && randomArray.includes(secondValue))) {
+            console.log("잘못 입력하셨습니다. 다시 입력해주세요.");
+        } else {
+            increaseTurn();
+            switchValues(randomArray, firstValue, secondValue);
+            console.log(randomArray);
+        }
+    } else {
+        console.log("잘못 입력하셨습니다. 다시 입력해 주세요");
+    }
+}
+
 
 function checkInputMatchesRegularExpression(currentInput) {
     const pattern = /^[1-8]\,\s?[1-8]/;
     return currentInput.match(pattern);
 }
+
 
 
 function switchValues(arr, firstValue, secondValue) {
@@ -76,6 +75,9 @@ function switchValues(arr, firstValue, secondValue) {
     [arr[index1], arr[index2]] = [arr[index2], arr[index1]];
 }
 
+function verifyArraysAreSame(randomArray, answerArray) {
+    return randomArray.every((value, index) => value === answerArray[index]);
+}
 
 
 
