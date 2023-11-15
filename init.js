@@ -11,7 +11,11 @@
  */
 
 const readlineSync = require('readline-sync');
-
+// const readline = require("readline");
+// const rl = readline.createInterface({
+// 	input: process.stdin,
+// 	output: process.stdout,
+// });
 
 
 function init() {
@@ -20,7 +24,7 @@ function init() {
     const randomArray = makeRandomNumArray();
     console.log(randomArray);
     const answerArray = makeAnswerArray(randomArray);
-    progressGame(randomArray, answerArray);
+    progressGame(randomArray);
 }
 
 function greetforStartingGame() {
@@ -40,29 +44,31 @@ function makeRandomNumArray() {
 
 
 function makeAnswerArray(randomArray) {
-    const randNumArray = [...randomArray];
-    return randNumArray.sort();
+    const sortedArray = [...randomArray].sort((a, b) => a - b);
+    return sortedArray;
 }
 
 
-function progressGame(randomArray, answerArray) {
-    console.log(answerArray)
-    while(randomArray !== answerArray) {
-        const currentInput = readlineSync.question("교환할 두 숫자를 입력");
-        const currentInputArray = currentInput.split(',');
-        const firstValue = Number(currentInputArray[0]);
-        const secondValue = Number(currentInputArray[1]);
-        if (!(randomArray.includes(firstValue) && randomArray.includes(secondValue))) {
-            console.log("잘못 입력하셨습니다. 다시 입력해주세요.");
-        } else if (!(currentInput.includes(','))) {
-            console.log("잘못 입력하셨습니다. 다시 입력해주세요.")
+function progressGame(randomArray) {
+        const currentInput = readlineSync.question("교환할 두 숫자를 입력 (예: 1,2)");
+        if (checkInputMatchesRegularExpression(currentInput)) {
+            const [firstValue, secondValue] = currentInput.split(',').map(e => Number(e));
+            if (!(randomArray.includes(firstValue) && randomArray.includes(secondValue))) {
+                console.log("잘못 입력하셨습니다. 다시 입력해주세요.");
+            } else {
+                switchValues(randomArray, firstValue, secondValue);
+                console.log(randomArray);
+            }
         } else {
-            switchValues(randomArray, firstValue, secondValue);
-            console.log(randomArray);
+            console.log("잘못 입력하셨습니다. 다시 입력해 주세요");
         }
-    }
-    console.log("축하");
 }
+
+function checkInputMatchesRegularExpression(currentInput) {
+    const pattern = /^[1-8]\,\s?[1-8]/;
+    return currentInput.match(pattern);
+}
+
 
 function switchValues(arr, firstValue, secondValue) {
     const index1 = arr.indexOf(firstValue);
@@ -71,17 +77,10 @@ function switchValues(arr, firstValue, secondValue) {
 }
 
 
-// init();
 
 
-function trueOrfalse() {
-    const arr1 = [1, 2, 3, 4, 5, 6, 7, 8];
-    const arr2 = makeRandomNumArray().sort();
-    if(arr1 === arr2) {
-        console.log("same")
-    } else {
-        console.log("not same")
-    }
-}
 
-trueOrfalse();
+
+
+init();
+
