@@ -4,4 +4,10 @@
  * 3. increaseTurn
  */
 
-const readlineSync = require('readline-sync');
+const readlineSync = require("readline-sync");
+
+function receiveInput() {
+    return readlineSync.question("숫자 입력");
+}
+
+module.exports = { receiveInput };

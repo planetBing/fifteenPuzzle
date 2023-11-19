@@ -1,9 +1,8 @@
-const { startGameandMixNumbers, progressGame } = require('./progressGame.js');
-
+const { startGameandMixNumbers, progressGame } = require("./progressGame.js");
 
 function init() {
     startGameandMixNumbers();
-    // progressGame();
+    progressGame();
 }
 
 init();
